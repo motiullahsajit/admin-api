@@ -34,7 +34,7 @@ export async function GET(req: any) {
     }
   } catch (error) {
     console.error("Error fetching user by ID:", error);
-    Response.json({ message: "Internal Server Error" });
+    return Response.json({ message: "Internal Server Error" });
   }
 }
 
@@ -66,7 +66,7 @@ export async function POST(req: Request) {
     }
   } catch (error) {
     console.error("Error logging in:", error);
-    Response.json({ message: "Internal Server Error" });
+    return Response.json({ message: "Internal Server Error" });
   }
 }
 
@@ -113,6 +113,6 @@ export async function PUT(req: Request) {
     return Response.json({ message: "Password updated successfully" });
   } catch (error) {
     console.error("Error updating password:", error);
-    Response.json({ message: "Internal Server Error" });
+    return Response.json({ message: "Internal Server Error" });
   }
 }

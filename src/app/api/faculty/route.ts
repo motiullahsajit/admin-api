@@ -42,8 +42,15 @@ export async function GET(req: any) {
 export async function POST(req: Request) {
   try {
     const faculty = await req.json();
-    const { name, username, email, qualifications, department_id, courses } =
-      faculty;
+    const {
+      name,
+      username,
+      email,
+      qualifications,
+      department_id,
+      courses,
+      phone_number,
+    } = faculty;
 
     if (
       !name ||
@@ -51,7 +58,8 @@ export async function POST(req: Request) {
       !email ||
       !qualifications ||
       !department_id ||
-      !courses
+      !courses ||
+      !phone_number
     ) {
       return Response.json({ message: "Required fields are missing" });
     }
@@ -66,13 +74,14 @@ export async function POST(req: Request) {
           email VARCHAR(255) UNIQUE NOT NULL,
           qualifications TEXT,
           department_id VARCHAR(50) NOT NULL,
-          courses TEXT[]
+          courses TEXT[],
+          phone_number VARCHAR(20) NOT NULL
         )`;
     await client.query(createTableQuery);
 
     const insertQuery = `
-        INSERT INTO faculty (name, username, email, qualifications, department_id, courses) 
-        VALUES ($1, $2, $3, $4, $5, $6)`;
+        INSERT INTO faculty (name, username, email, qualifications, department_id, courses, phone_number) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7)`;
     await client.query(insertQuery, [
       name,
       username,
@@ -80,6 +89,7 @@ export async function POST(req: Request) {
       qualifications,
       department_id,
       courses,
+      phone_number,
     ]);
 
     client.release();
@@ -111,6 +121,7 @@ export async function PUT(req: Request) {
       qualifications,
       department_id,
       courses,
+      phone_number,
     } = facultyData;
 
     if (!id) {
@@ -130,40 +141,47 @@ export async function PUT(req: Request) {
     const updateQueryParts = [];
     const queryParams = [];
 
-    if (name) {
-      updateQueryParts.push("name = $1");
+    let queryIndex = 1;
+
+    if (name !== undefined) {
+      updateQueryParts.push(`name = $${queryIndex++}`);
       queryParams.push(name);
     }
 
-    if (username) {
-      updateQueryParts.push("username = $2");
+    if (username !== undefined) {
+      updateQueryParts.push(`username = $${queryIndex++}`);
       queryParams.push(username);
     }
 
-    if (email) {
-      updateQueryParts.push("email = $3");
+    if (email !== undefined) {
+      updateQueryParts.push(`email = $${queryIndex++}`);
       queryParams.push(email);
     }
 
-    if (qualifications) {
-      updateQueryParts.push("qualifications = $4");
+    if (qualifications !== undefined) {
+      updateQueryParts.push(`qualifications = $${queryIndex++}`);
       queryParams.push(qualifications);
     }
 
-    if (department_id) {
-      updateQueryParts.push("department_id = $5");
+    if (department_id !== undefined) {
+      updateQueryParts.push(`department_id = $${queryIndex++}`);
       queryParams.push(department_id);
     }
 
-    if (courses) {
-      updateQueryParts.push("courses = $6");
+    if (courses !== undefined) {
+      updateQueryParts.push(`courses = $${queryIndex++}`);
       queryParams.push(courses);
     }
 
+    if (phone_number !== undefined) {
+      updateQueryParts.push(`phone_number = $${queryIndex++}`);
+      queryParams.push(phone_number);
+    }
+
     const updateQuery = `
-          UPDATE faculty 
-          SET ${updateQueryParts.join(", ")}
-          WHERE id = $${queryParams.length + 1}`;
+      UPDATE faculty 
+      SET ${updateQueryParts.join(", ")}
+      WHERE id = $${queryIndex}`;
 
     queryParams.push(id);
 
