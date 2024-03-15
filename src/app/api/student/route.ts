@@ -13,7 +13,8 @@ export async function GET(req: any) {
       return Response.json({ message: "Access denied" });
     }
 
-    let query = "SELECT * FROM student";
+    let query =
+      "SELECT id, name, username, email, guardian_id, phone_number, address, department FROM student";
 
     if (studentId) {
       query += " WHERE id = $1";
@@ -32,14 +33,14 @@ export async function GET(req: any) {
       client.release();
 
       if (rows.length === 0) {
-        return Response.json({ message: "No Student Exits" });
+        return Response.json({ message: "No Student Exists" });
       }
 
       return Response.json(rows);
     }
   } catch (error) {
     console.error("Error fetching students:", error);
-    return Response.json({ message: "Internal Server Error" });
+    return Response.json({ message: "Error fetching students" });
   }
 }
 
@@ -50,6 +51,7 @@ export async function POST(req: Request) {
       name,
       username,
       email,
+      password,
       guardian_id,
       phone_number,
       address,
@@ -60,6 +62,7 @@ export async function POST(req: Request) {
       !name ||
       !username ||
       !email ||
+      !password ||
       !guardian_id ||
       !phone_number ||
       !address ||
@@ -86,6 +89,7 @@ export async function POST(req: Request) {
               name VARCHAR(255) NOT NULL,
               username VARCHAR(255) UNIQUE NOT NULL,
               email VARCHAR(255) UNIQUE NOT NULL,
+              password VARCHAR(255) NOT NULL,
               guardian_id INT NOT NULL,
               phone_number VARCHAR(20),
               address TEXT,
@@ -95,12 +99,13 @@ export async function POST(req: Request) {
     }
 
     const insertQuery = `
-          INSERT INTO student (name, username, email, guardian_id, phone_number, address, department) 
-          VALUES ($1, $2, $3, $4, $5, $6, $7)`;
+          INSERT INTO student (name, username, email, password, guardian_id, phone_number, address, department) 
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`;
     await client.query(insertQuery, [
       name,
       username,
       email,
+      password,
       guardian_id,
       phone_number,
       address,
@@ -133,6 +138,7 @@ export async function PUT(req: Request) {
       name,
       username,
       email,
+      password,
       guardian_id,
       phone_number,
       address,
@@ -171,6 +177,11 @@ export async function PUT(req: Request) {
     if (email !== undefined) {
       updateQueryParts.push(`email = $${queryIndex++}`);
       queryParams.push(email);
+    }
+
+    if (password !== undefined) {
+      updateQueryParts.push(`password = $${queryIndex++}`);
+      queryParams.push(password);
     }
 
     if (guardian_id !== undefined) {

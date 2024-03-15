@@ -39,7 +39,7 @@ export async function GET(req: any) {
     }
   } catch (error) {
     console.error("Error fetching courses:", error);
-    return Response.json({ message: "Internal Server Error" });
+    return Response.json({ message: "Error fetching courses" });
   }
 }
 

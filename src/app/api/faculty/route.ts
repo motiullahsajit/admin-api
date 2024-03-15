@@ -13,7 +13,8 @@ export async function GET(req: any) {
       return Response.json({ message: "Access denied" });
     }
 
-    let query = "SELECT * FROM faculty";
+    let query =
+      "SELECT id, name, username, email, qualifications, department_id, courses, phone_number FROM faculty";
 
     if (facultyId) {
       query += " WHERE id = $1";
@@ -32,14 +33,14 @@ export async function GET(req: any) {
       client.release();
 
       if (rows.length === 0) {
-        return Response.json({ message: "No Faculty Exits" });
+        return Response.json({ message: "No Faculty Exists" });
       }
 
       return Response.json(rows);
     }
   } catch (error) {
-    console.error("Error fetching faulty faculty data:", error);
-    return Response.json({ message: "Internal Server Error" });
+    console.error("Error fetching faculty data:", error);
+    return Response.json({ message: "Error fetching faculty" });
   }
 }
 
@@ -50,6 +51,7 @@ export async function POST(req: Request) {
       name,
       username,
       email,
+      password,
       qualifications,
       department_id,
       courses,
@@ -60,6 +62,7 @@ export async function POST(req: Request) {
       !name ||
       !username ||
       !email ||
+      !password ||
       !qualifications ||
       !department_id ||
       !courses ||
@@ -86,6 +89,7 @@ export async function POST(req: Request) {
           name VARCHAR(255) NOT NULL,
           username VARCHAR(255) UNIQUE NOT NULL,
           email VARCHAR(255) UNIQUE NOT NULL,
+          password VARCHAR(255) NOT NULL, 
           qualifications TEXT,
           department_id VARCHAR(50) NOT NULL,
           courses TEXT[],
@@ -95,12 +99,13 @@ export async function POST(req: Request) {
     }
 
     const insertQuery = `
-      INSERT INTO faculty (name, username, email, qualifications, department_id, courses, phone_number) 
-      VALUES ($1, $2, $3, $4, $5, $6, $7)`;
+      INSERT INTO faculty (name, username, email, password, qualifications, department_id, courses, phone_number) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`;
     await client.query(insertQuery, [
       name,
       username,
       email,
+      password,
       qualifications,
       department_id,
       courses,
@@ -133,6 +138,7 @@ export async function PUT(req: Request) {
       name,
       username,
       email,
+      password,
       qualifications,
       department_id,
       courses,
@@ -171,6 +177,11 @@ export async function PUT(req: Request) {
     if (email !== undefined) {
       updateQueryParts.push(`email = $${queryIndex++}`);
       queryParams.push(email);
+    }
+
+    if (password !== undefined) {
+      updateQueryParts.push(`password = $${queryIndex++}`);
+      queryParams.push(password);
     }
 
     if (qualifications !== undefined) {

@@ -33,8 +33,8 @@ export async function GET(req: any) {
       return Response.json(rows);
     }
   } catch (error) {
-    console.error("Error fetching user by ID:", error);
-    return Response.json({ message: "Internal Server Error" });
+    console.error("Error fetching users:", error);
+    return Response.json({ message: "Error fetching users" });
   }
 }
 
