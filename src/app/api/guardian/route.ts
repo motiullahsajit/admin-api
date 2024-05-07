@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import pool from "../../../../utils/database";
 import isAdmin from "../../../../utils/middleware";
 
@@ -68,6 +69,9 @@ export async function POST(req: Request) {
       return Response.json({ message: "Required fields are missing" });
     }
 
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
     const client = await pool.connect();
 
     const checkTableQuery = `
@@ -101,7 +105,7 @@ export async function POST(req: Request) {
       name,
       username,
       email,
-      password,
+      hashedPassword,
       student_id,
       phone_number,
       address,
