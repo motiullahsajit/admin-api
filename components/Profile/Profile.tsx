@@ -26,7 +26,8 @@ export default function Profile() {
 
   const loadUser = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/admin?id=5");
+      const userId = localStorage.getItem("userId");
+      const response = await axios.get(`/api/admin?id=${userId}`);
       const userData = response.data;
       setUser({
         photo_url: userData.photo_url,
@@ -70,18 +71,15 @@ export default function Profile() {
   const handleSubmitUserInfo = async (e: any) => {
     e.preventDefault();
     try {
-      const response = await axios.put(
-        "http://localhost:3000/api/admin?type=info",
-        {
-          username: user.username,
-          email: user.email,
-          name: formData.name,
-          phone_number: formData.phone_number,
-          photo_url: formData.new_photo_url
-            ? formData.new_photo_url
-            : user.photo_url,
-        }
-      );
+      const response = await axios.put("/api/admin?type=info", {
+        username: user.username,
+        email: user.email,
+        name: formData.name,
+        phone_number: formData.phone_number,
+        photo_url: formData.new_photo_url
+          ? formData.new_photo_url
+          : user.photo_url,
+      });
       setUser({
         ...user,
         name: formData.name,
@@ -100,14 +98,11 @@ export default function Profile() {
   const handleSubmitPassword = async (e: any) => {
     e.preventDefault();
     try {
-      const response = await axios.put(
-        "http://localhost:3000/api/admin?type=pass",
-        {
-          ...formData,
-          username: user.username,
-          email: user.email,
-        }
-      );
+      const response = await axios.put("/api/admin?type=pass", {
+        ...formData,
+        username: user.username,
+        email: user.email,
+      });
       setFormData({
         ...formData,
         oldPassword: "",

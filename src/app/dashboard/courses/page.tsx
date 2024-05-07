@@ -11,7 +11,9 @@ export default function Courses() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response: any = await axios.get("/api/course?adminId=5");
+        const userId = localStorage.getItem("userId");
+
+        const response: any = await axios.get(`/api/course?adminId=${userId}`);
         setCourses(response?.data);
       } catch (error) {
         console.error("Error fetching data: ", error);
@@ -22,12 +24,10 @@ export default function Courses() {
   }, []);
 
   const handleUpdate = (id: number) => {
-    // Implement update logic
     console.log("Update Faculty with ID:", id);
   };
 
   const handleDelete = (id: number) => {
-    // Implement delete logic
     console.log("Delete Faculty with ID:", id);
   };
 

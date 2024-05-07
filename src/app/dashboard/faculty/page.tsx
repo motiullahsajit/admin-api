@@ -1,9 +1,11 @@
 "use client";
+import axios from "axios";
 import { useState, useEffect } from "react";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import SideBar from "../../../../components/SideBar/SideBar";
+import Modal from "./Modal";
 import styles from "../table.module.scss";
-import axios from "axios";
+import ConfirmModal from "../../../../components/ConfirmModal/ConfirmModal";
 
 interface Faculty {
   id: number;
@@ -18,36 +20,89 @@ interface Faculty {
 
 export default function Faculty() {
   const [faculties, setFaculties] = useState<Faculty[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUpdateMode, setIsUpdateMode] = useState(false);
+  const [facultyToDelete, setFacultyToDelete] = useState<number>();
+  const [facultyToUpdate, setFacultyToUpdate] = useState<Faculty | null>(null);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response: any = await axios.get("/api/faculty?adminId=5");
-        setFaculties(response?.data);
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-      }
-    };
+  const fetchData = async () => {
+    try {
+      const userId = localStorage.getItem("userId");
+      const response: any = await axios.get(`/api/faculty?adminId=${userId}`);
+      setFaculties(response?.data);
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+    }
+  };
 
+  const openConfirmModal = () => {
+    setIsConfirmModalOpen(true);
+  };
+
+  const closeConfirmModal = () => {
+    setIsConfirmModalOpen(false);
+  };
+
+  const handleDeleteConfirmed = async () => {
+    try {
+      const userId = localStorage.getItem("userId");
+
+      const response = await axios.delete(`/api/faculty?adminId=${userId}`, {
+        data: { id: facultyToDelete },
+      });
+      alert(response.data.message);
+      setIsConfirmModalOpen(false);
+      fetchData();
+    } catch (error) {
+      console.error("Error deleting faculty:", error);
+    }
+  };
+
+  const openModal = (isUpdate: boolean, faculty?: Faculty) => {
+    setIsUpdateMode(isUpdate);
+    setIsModalOpen(true);
+    if (isUpdate) {
+      setFacultyToUpdate(faculty || null);
+    }
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setIsUpdateMode(false);
+    setFacultyToUpdate(null);
     fetchData();
-  }, []);
+  };
 
-  const handleUpdate = (id: number) => {
-    // Implement update logic
-    console.log("Update Faculty with ID:", id);
+  const handleUpdate = (faculty: Faculty) => {
+    openModal(true, faculty);
   };
 
   const handleDelete = (id: number) => {
-    // Implement delete logic
-    console.log("Delete Faculty with ID:", id);
+    setFacultyToDelete(id);
+    openConfirmModal();
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <main className="flex">
       <SideBar />
       <section className={styles["section"]}>
         <div className={styles["div-section"]}>
-          <h2>All Faculty</h2>
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold">Faculty List</h1>
+            <div>
+              <button
+                className="bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded"
+                onClick={() => openModal(false)}
+              >
+                Add Faculty
+              </button>
+            </div>
+          </div>
           <table className={styles["table"]}>
             <thead>
               <tr>
@@ -71,7 +126,7 @@ export default function Faculty() {
                   <td>{faculty.phone_number}</td>
                   <td>
                     <button
-                      onClick={() => handleUpdate(faculty.id)}
+                      onClick={() => handleUpdate(faculty)}
                       className={styles["button"]}
                     >
                       <AiFillEdit />
@@ -86,6 +141,17 @@ export default function Faculty() {
           </table>
         </div>
       </section>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        isUpdate={isUpdateMode}
+        facultyToUpdate={facultyToUpdate}
+      />
+      <ConfirmModal
+        isOpen={isConfirmModalOpen}
+        onClose={closeConfirmModal}
+        onConfirm={handleDeleteConfirmed}
+      />
     </main>
   );
 }

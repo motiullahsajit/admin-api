@@ -20,7 +20,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:3000/api/admin", {
+      const response = await axios.post("/api/admin", {
         username,
         password,
       });
@@ -41,12 +41,9 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
-        `http://localhost:3000/api/admin/initiate`,
-        {
-          email,
-        }
-      );
+      const response = await axios.post(`/api/admin/initiate`, {
+        email,
+      });
       if (response?.data?.success === true) {
         alert(response.data.message);
         setResetStep("reset-confirm");
@@ -63,7 +60,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      await axios.post(`http://localhost:3000/api/admin/confirm`, {
+      await axios.post(`/api/admin/confirm`, {
         code: verificationCode,
         newPassword,
       });
