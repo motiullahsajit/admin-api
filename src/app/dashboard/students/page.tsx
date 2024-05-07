@@ -4,38 +4,79 @@ import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import SideBar from "../../../../components/SideBar/SideBar";
 import styles from "../table.module.scss";
 import axios from "axios";
+import Modal from "./Modal";
+import ConfirmModal from "../../../../components/ConfirmModal/ConfirmModal";
 
 export default function Students() {
   const [students, setStudents] = useState<any[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isUpdateMode, setIsUpdateMode] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState<number>();
+  const [studentToUpdate, setStudentToUpdate] = useState<any | null>(null);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const fetchData = async () => {
+    try {
+      const userId = localStorage.getItem("userId");
+      const response: any = await axios.get(`/api/student?adminId=${userId}`);
+      setStudents(response?.data);
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+    }
+  };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const userId = localStorage.getItem("userId");
-        const response: any = await axios.get(`/api/student?adminId=${userId}`);
-        setStudents(response?.data);
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const handleUpdate = (id: number) => {
-    console.log("Update Faculty with ID:", id);
+  const handleUpdate = (student: any) => {
+    setIsUpdateMode(true);
+    setStudentToUpdate(student);
+    setIsModalOpen(true);
   };
 
   const handleDelete = (id: number) => {
-    console.log("Delete Faculty with ID:", id);
+    setStudentToDelete(id);
+    setIsConfirmModalOpen(true);
   };
+
+  const closeModal = () => {
+    setIsUpdateMode(false);
+    setStudentToUpdate(null);
+    setIsModalOpen(false);
+    setIsConfirmModalOpen(false);
+    fetchData();
+  };
+
+  const handleDeleteConfirmed = async () => {
+    try {
+      const userId = localStorage.getItem("userId");
+      const response = await axios.delete(`/api/student?adminId=${userId}`, {
+        data: { id: studentToDelete },
+      });
+      alert(response.data.message);
+      setIsConfirmModalOpen(false);
+      fetchData();
+    } catch (error) {
+      console.error("Error deleting student:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <main className="flex">
       <SideBar />
       <section className={styles["section"]}>
         <div className={styles["div-section"]}>
-          <h2>All Students</h2>
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold">All Students</h1>
+            <div>
+              <button
+                className="bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded"
+                onClick={() => setIsModalOpen(true)}
+              >
+                Add Student
+              </button>
+            </div>
+          </div>
           <table className={styles["table"]}>
             <thead>
               <tr>
@@ -57,7 +98,7 @@ export default function Students() {
                   <td>{student.phone_number}</td>
                   <td>
                     <button
-                      onClick={() => handleUpdate(student.id)}
+                      onClick={() => handleUpdate(student)}
                       className={styles["button"]}
                     >
                       <AiFillEdit />
@@ -72,6 +113,17 @@ export default function Students() {
           </table>
         </div>
       </section>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        isUpdate={isUpdateMode}
+        studentToUpdate={studentToUpdate}
+      />
+      <ConfirmModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={handleDeleteConfirmed}
+      />
     </main>
   );
 }
