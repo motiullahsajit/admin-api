@@ -1,0 +1,77 @@
+.flex {
+  display: flex;
+  justify-content: center;
+}
+
+.section {
+  display: flex;
+  justify-content: center;
+}
+
+.div-section {
+  min-width: 700px;
+  padding: 2rem;
+  h2 {
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+
+  th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+
+  tbody tr:hover {
+    background-color: #f9f9f9;
+  }
+
+  td[data-label]::before {
+    content: attr(data-label);
+    font-weight: bold;
+    display: block;
+    color: #666;
+    margin-bottom: 5px;
+  }
+
+  @media screen and (max-width: 600px) {
+    th,
+    td {
+      padding: 8px;
+    }
+
+    td {
+      display: block;
+      padding-left: 16px;
+    }
+
+    td:nth-child(even) {
+      background-color: transparent;
+    }
+
+    td::before {
+      display: none;
+    }
+  }
+}
+
+.button {
+  margin-right: 5px; // Adding margin-right to edit button
+}
