@@ -103,42 +103,48 @@ export default function Faculty() {
               </button>
             </div>
           </div>
-          <table className={styles["table"]}>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Qualifications</th>
-                <th>Department</th>
-                <th>Phone Number</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {faculties.map((faculty) => (
-                <tr key={faculty.id}>
-                  <td>{faculty.name}</td>
-                  <td>{faculty.username}</td>
-                  <td>{faculty.email}</td>
-                  <td>{faculty.qualifications}</td>
-                  <td>{faculty.department_id}</td>
-                  <td>{faculty.phone_number}</td>
-                  <td>
-                    <button
-                      onClick={() => handleUpdate(faculty)}
-                      className={styles["button"]}
-                    >
-                      <AiFillEdit />
-                    </button>
-                    <button onClick={() => handleDelete(faculty.id)}>
-                      <AiFillDelete />
-                    </button>
-                  </td>
+          {faculties.length > 0 ? (
+            <table className={styles["table"]}>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Qualifications</th>
+                  <th>Department</th>
+                  <th>Phone Number</th>
+                  <th>Action</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {faculties.map((faculty) => (
+                  <tr key={faculty.id}>
+                    <td>{faculty.name}</td>
+                    <td>{faculty.username}</td>
+                    <td>{faculty.email}</td>
+                    <td>{faculty.qualifications}</td>
+                    <td>{faculty.department_id}</td>
+                    <td>{faculty.phone_number}</td>
+                    <td>
+                      <button
+                        onClick={() => handleUpdate(faculty)}
+                        className={styles["button"]}
+                      >
+                        <AiFillEdit />
+                      </button>
+                      <button onClick={() => handleDelete(faculty.id)}>
+                        <AiFillDelete />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <h1 className="text-2xl">
+              There is currently no faculty list available.
+            </h1>
+          )}
         </div>
       </section>
       <Modal

@@ -77,38 +77,44 @@ export default function Courses() {
               </button>
             </div>
           </div>
-          <table className={styles["table"]}>
-            <thead>
-              <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Course Code</th>
-                <th>Credit</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {courses.map((course) => (
-                <tr key={course.id}>
-                  <td>{course.id}</td>
-                  <td>{course.name}</td>
-                  <td>{course.course_code}</td>
-                  <td>{course.credit}</td>
-                  <td>
-                    <button
-                      onClick={() => handleUpdate(course)}
-                      className={styles["button"]}
-                    >
-                      <AiFillEdit />
-                    </button>
-                    <button onClick={() => handleDelete(course.id)}>
-                      <AiFillDelete />
-                    </button>
-                  </td>
+          {courses.length > 0 ? (
+            <table className={styles["table"]}>
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Name</th>
+                  <th>Course Code</th>
+                  <th>Credit</th>
+                  <th>Action</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {courses.map((course) => (
+                  <tr key={course.id}>
+                    <td>{course.id}</td>
+                    <td>{course.name}</td>
+                    <td>{course.course_code}</td>
+                    <td>{course.credit}</td>
+                    <td>
+                      <button
+                        onClick={() => handleUpdate(course)}
+                        className={styles["button"]}
+                      >
+                        <AiFillEdit />
+                      </button>
+                      <button onClick={() => handleDelete(course.id)}>
+                        <AiFillDelete />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <h1 className="text-2xl">
+              There is currently no courses list available.
+            </h1>
+          )}
         </div>
       </section>
       <Modal

@@ -77,40 +77,46 @@ export default function Students() {
               </button>
             </div>
           </div>
-          <table className={styles["table"]}>
-            <thead>
-              <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Department</th>
-                <th>Phone Number</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {students.map((student) => (
-                <tr key={student.id}>
-                  <td>{student.id}</td>
-                  <td>{student.name}</td>
-                  <td>{student.email}</td>
-                  <td>{student.department}</td>
-                  <td>{student.phone_number}</td>
-                  <td>
-                    <button
-                      onClick={() => handleUpdate(student)}
-                      className={styles["button"]}
-                    >
-                      <AiFillEdit />
-                    </button>
-                    <button onClick={() => handleDelete(student.id)}>
-                      <AiFillDelete />
-                    </button>
-                  </td>
+          {students.length > 0 ? (
+            <table className={styles["table"]}>
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Department</th>
+                  <th>Phone Number</th>
+                  <th>Action</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {students.map((student) => (
+                  <tr key={student.id}>
+                    <td>{student.id}</td>
+                    <td>{student.name}</td>
+                    <td>{student.email}</td>
+                    <td>{student.department}</td>
+                    <td>{student.phone_number}</td>
+                    <td>
+                      <button
+                        onClick={() => handleUpdate(student)}
+                        className={styles["button"]}
+                      >
+                        <AiFillEdit />
+                      </button>
+                      <button onClick={() => handleDelete(student.id)}>
+                        <AiFillDelete />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <h1 className="text-2xl">
+              There is currently no students list available.
+            </h1>
+          )}
         </div>
       </section>
       <Modal

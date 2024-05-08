@@ -77,42 +77,48 @@ export default function Guardians() {
               </button>
             </div>
           </div>
-          <table className={styles["table"]}>
-            <thead>
-              <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Student Id</th>
-                <th>Phone Number</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {guardians.map((guardian) => (
-                <tr key={guardian.id}>
-                  <td>{guardian.id}</td>
-                  <td>{guardian.name}</td>
-                  <td>{guardian.username}</td>
-                  <td>{guardian.email}</td>
-                  <td>{guardian.student_id}</td>
-                  <td>{guardian.phone_number}</td>
-                  <td>
-                    <button
-                      onClick={() => handleUpdate(guardian)}
-                      className={styles["button"]}
-                    >
-                      <AiFillEdit />
-                    </button>
-                    <button onClick={() => handleDelete(guardian.id)}>
-                      <AiFillDelete />
-                    </button>
-                  </td>
+          {guardians.length > 0 ? (
+            <table className={styles["table"]}>
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Name</th>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Student Id</th>
+                  <th>Phone Number</th>
+                  <th>Action</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {guardians.map((guardian) => (
+                  <tr key={guardian.id}>
+                    <td>{guardian.id}</td>
+                    <td>{guardian.name}</td>
+                    <td>{guardian.username}</td>
+                    <td>{guardian.email}</td>
+                    <td>{guardian.student_id}</td>
+                    <td>{guardian.phone_number}</td>
+                    <td>
+                      <button
+                        onClick={() => handleUpdate(guardian)}
+                        className={styles["button"]}
+                      >
+                        <AiFillEdit />
+                      </button>
+                      <button onClick={() => handleDelete(guardian.id)}>
+                        <AiFillDelete />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <h1 className="text-2xl">
+              There is currently no guardian list available.
+            </h1>
+          )}
         </div>
       </section>
       <Modal
